@@ -1,6 +1,3 @@
-import "/usr/share/ublue-os/justfile"
-# You can add your own commands here! For documentation, see: https://ublue.it/guide/just/
-
 first-install:
     flatpak install \
       flathub com.bitwarden.desktop \
@@ -23,11 +20,20 @@ first-install:
       flathub org.wireshark.Wireshark \
       flathub com.nextcloud.desktopclient.nextcloud \
       flathub com.google.Chrome \
-      flathub io.github.shiftey.Desktop
+      flathub io.github.shiftey.Desktop \
+      flathub io.github.dvlv.boxbuddyrs \
+      flathub com.github.tchx84.Flatseal \
+      flathub io.guthub.flattool.Warehouse \
+      flathub io.missioncenter.MissionCenter \
+      flathub org.gnome.World.PikaBackup \
+      flathub com.github.rafostar.Clapper \
+      flathub com.mattjakeman.ExtensionManager \
 
     brew install \
       ansible \
       chezmoi \
       neovim  \
       onedrive \
-      wireguard-tools
+      wireguard-tools \
+      hugo \
+      virt-manager 
