@@ -1,5 +1,5 @@
 first-install:
-    flatpak install \
+    flatpak install --noninteractive \
       flathub com.bitwarden.desktop \
       flathub com.brave.Browser \
       flathub com.discordapp.Discord \
@@ -28,12 +28,65 @@ first-install:
       flathub org.gnome.World.PikaBackup \
       flathub com.github.rafostar.Clapper \
       flathub com.mattjakeman.ExtensionManager \
+      flathub com.jgraph.drawio.desktop
 
+install-dev-tools:
+    sudo dnf -y groupinstall \
+      "Development Tools"
+
+Install-Homebrew:
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bash_profile
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+update-DNF:
+    sudo bash -c 'echo "fastestmirror=True" >> /etc/dnf/dnf.conf'
+    sudo bash -c 'echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf'
+    sudo bash -c 'echo "defaultyes=True" >> /etc/dnf/dnf.conf'
+    sudo bash -c 'echo "keepcache=True" >> /etc/dnf/dnf.conf'
+
+install-packages:
+    sudo dnf -y update
+    sudo dnf install -y gnome-screenshot
+    sudo dnf -y groupupdate core
+    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    sudo dnf install -y wireguard-tools
+    sudo dnf install gnome-tweaks
+    sudo dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+    sudo dnf -y update
+
+install-gnome-extensions:
+    array=(
+    legacyschemeautoswitcher@joshimukul29.gmail.com
+    appindicatorsupport@rgcjonas.gmail.com
+    blur-my-shell@aunetx
+    caffeine@patapon.info
+    dash-to-dock@micxgx.gmail.com
+    logomenu@aryan_k
+    search-light@icedman.github.com
+    apps-menu@gnome-shell-extensions.gcampax.github.com
+    background-logo@fedorahosted.org
+    launch-new-instance@gnome-shell-extensions.gcampax.github.com
+    places-menu@gnome-shell-extensions.gcampax.github.com
+    window-list@gnome-shell-extensions.gcampax.github.com
+    )
+
+    for i in "${array[@]}"
+    do
+    VERSION_TAG=$(curl -Lfs "https://extensions.gnome.org/extension-query/?search=${i}" | jq '.extensions[0] | .shell_version_map | map(.pk) | max')
+    wget -O ${i}.zip "https://extensions.gnome.org/download-extension/${i}.shell-extension.zip?version_tag=$VERSION_TAG"
+    gnome-extensions install --force ${EXTENSION_ID}.zip
+    if ! gnome-extensions list | grep --quiet ${i}; then
+    busctl --user call org.gnome.Shell.Extensions /org/gnome/Shell/Extensions org.gnome.Shell.Extensions InstallRemoteExtension s ${i}
+    fi
+    gnome-extensions enable ${i}
+    rm ${EXTENSION_ID}.zip
+    done  
+
+homebrew:
     brew install \
-      ansible \
       chezmoi \
-      neovim  \
       onedrive \
-      wireguard-tools \
       hugo \
       virt-manager 
