@@ -23,29 +23,25 @@ first-install:
       flathub io.github.shiftey.Desktop \
       flathub io.github.dvlv.boxbuddyrs \
       flathub com.github.tchx84.Flatseal \
-      flathub io.guthub.flattool.Warehouse \
+      flathub io.github.flattool.Warehouse \
       flathub io.missioncenter.MissionCenter \
       flathub org.gnome.World.PikaBackup \
       flathub com.github.rafostar.Clapper \
       flathub com.mattjakeman.ExtensionManager \
       flathub com.jgraph.drawio.desktop
 
-install-dev-tools:
     sudo dnf -y groupinstall \
       "Development Tools"
 
-Install-Homebrew:
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bash_profile
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-update-DNF:
     sudo bash -c 'echo "fastestmirror=True" >> /etc/dnf/dnf.conf'
     sudo bash -c 'echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf'
     sudo bash -c 'echo "defaultyes=True" >> /etc/dnf/dnf.conf'
     sudo bash -c 'echo "keepcache=True" >> /etc/dnf/dnf.conf'
 
-install-packages:
     sudo dnf -y update
     sudo dnf install -y gnome-screenshot
     sudo dnf -y groupupdate core
@@ -55,22 +51,14 @@ install-packages:
     sudo dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
     sudo dnf -y update
+    sudo dnf install gnome-themes-extra
+    gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+    sudo dnf install -y go
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+    source ~/.bashrc
 
 install-gnome-extensions:
-    array=(
-    legacyschemeautoswitcher@joshimukul29.gmail.com
-    appindicatorsupport@rgcjonas.gmail.com
-    blur-my-shell@aunetx
-    caffeine@patapon.info
-    dash-to-dock@micxgx.gmail.com
-    logomenu@aryan_k
-    search-light@icedman.github.com
-    apps-menu@gnome-shell-extensions.gcampax.github.com
-    background-logo@fedorahosted.org
-    launch-new-instance@gnome-shell-extensions.gcampax.github.com
-    places-menu@gnome-shell-extensions.gcampax.github.com
-    window-list@gnome-shell-extensions.gcampax.github.com
-    )
+    array=(legacyschemeautoswitcher@joshimukul29.gmail.com appindicatorsupport@rgcjonas.gmail.com blur-my-shell@aunetx caffeine@patapon.info dash-to-dock@micxgx.gmail.com logomenu@aryan_k search-light@icedman.github.com apps-menu@gnome-shell-extensions.gcampax.github.com background-logo@fedorahosted.org launch-new-instance@gnome-shell-extensions.gcampax.github.com places-menu@gnome-shell-extensions.gcampax.github.com window-list@gnome-shell-extensions.gcampax.github.com)
 
     for i in "${array[@]}"
     do
@@ -82,11 +70,11 @@ install-gnome-extensions:
     fi
     gnome-extensions enable ${i}
     rm ${EXTENSION_ID}.zip
-    done  
+    done
 
 homebrew:
     brew install \
       chezmoi \
       onedrive \
       hugo \
-      virt-manager 
+      virt-manager
